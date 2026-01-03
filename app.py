@@ -22,3 +22,7 @@ def chat_with_marta(user_input: UserInput):
 @app.get("/")
 def read_root():
     return {"message": "Marta is running. Use the /docs endpoint to see the API documentation."}
+
+@app.get("/menu-hoje")
+def menu_hoje():
+    return {"prato": "Arroz de tamboril", "preco": "18€"}
