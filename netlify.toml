@@ -1,0 +1,3 @@
+[build]
+  command = "pip install -r requirements.txt && gunicorn app:app --worker-class uvicorn.workers.UvicornWorker"
+  publish = "."
