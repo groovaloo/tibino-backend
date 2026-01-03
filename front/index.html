@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurante Tibino - Menus do Dia</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            width: 90%;
+            max-width: 960px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #555;
+            text-align: center;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 20px auto;
+        }
+        #menus-container {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            min-height: 100px; /* Just to make it visible */
+            text-align: center;
+            color: #777;
+        }
+        .chatbot-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-size: 16px;
+            z-index: 1000;
+        }
+        .chatbot-popup {
+            display: none; /* Hidden by default */
+            position: fixed;
+            bottom: 80px; /* Above the button */
+            right: 20px;
+            width: 300px;
+            height: 400px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border-radius: 8px;
+            z-index: 999;
+            flex-direction: column;
+        }
+        .chatbot-popup.visible {
+            display: flex; /* Show when visible */
+        }
+        .chatbot-header {
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            font-weight: bold;
+            text-align: center;
+        }
+        .chatbot-body {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background-color: #e9e9e9;
+        }
+        .chatbot-footer {
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            display: flex;
+        }
+        .chatbot-footer input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 5px;
+        }
+        .chatbot-footer button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const menusContainer = document.getElementById('menus-container');
+            try {
+                // NOTE: This endpoint needs to be implemented in the backend.
+                const response = await fetch('https://tibino-backend.netlify.app/menu-hoje');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json(); // Assuming the backend returns JSON
+                if (data.menu && data.menu.length > 0) {
+                    menusContainer.innerHTML = '<ul>' + data.menu.map(item => `<li>${item}</li>`).join('') + '</ul>';
+                } else {
+                    menusContainer.innerHTML = '<p>Nenhum menu do dia disponível.</p>';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar o menu do dia:', error);
+                menusContainer.innerHTML = '<p>Erro ao carregar os menus. Por favor, tente novamente mais tarde.</p>';
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Restaurante Tibino - Menus do Dia</h1>
+        
+        <img src="/fotos/tibino.jpg" alt="Fachada do Restaurante Tibino" style="max-width: 100%;">
+        
+        <h2>Menus do Dia</h2>
+        
+        <div id="menus-container">
+            <!-- Os menus diários serão carregados aqui -->
+            <p>Carregando menus...</p>
+        </div>
+    </div>
+
+    <button class="chatbot-button">Fala com a Marta</button>
+
+    <div id="chatbot-popup" class="chatbot-popup">
+        <div class="chatbot-header">Chat com a Marta</div>
+        <div class="chatbot-body">
+            <!-- Mensagens do chatbot aqui -->
+            <p>Olá! Como posso ajudar?</p>
+        </div>
+        <div class="chatbot-footer">
+            <input type="text" placeholder="Escreve a tua mensagem...">
+            <button>Enviar</button>
+        </div>
+    </div>
+</body>
+</html>
