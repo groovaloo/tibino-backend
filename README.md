@@ -1,23 +1,26 @@
 # Marta do Tibino - AI Assistant
 
-This project is an AI-powered assistant named Marta, designed to handle reservations for the Tibino restaurant in Foz do Arelho.
+Este projeto é uma assistente de IA, chamada Marta, projetada para gerir reservas para o restaurante Tibino na Foz do Arelho.
 
-## Project Structure
+## Estrutura do Projeto
 
-The project is structured into several modules, each with a specific responsibility:
+O **backend da Marta** está alojado num repositório GitHub, chamado `tibino-backend`.
+O **frontend** (site do menu/carta de vinhos) é uma aplicação separada, alojada no Netlify.
 
-- **`app.py`**: The main application file that initializes the FastAPI app and defines the API routes.
-- **`models.py`**: Contains all the Pydantic data models used for request and response validation.
-- **`config.py`**: Holds all the application's configuration, such as restaurant opening hours, capacity, and session duration.
-- **`responses.py`**: Stores all the translated responses that Marta can send to the user.
-- **`sessions.py`**: Manages user sessions, including creation, retrieval, and cleanup of expired sessions.
-- **`logic.py`**: Contains the core business logic of the assistant, including message processing and intent recognition.
-- **`pratos_do_dia.py`**: Stores the daily specials for the restaurant.
-- **`.env`**: Environment variables file.
-- **`requirements.txt`**: A list of all the project's dependencies.
-- **`README.md`**: This file, containing the project's documentation.
+A estrutura de módulos do backend (`tibino-backend`) é a seguinte, cada um com uma responsabilidade específica:
 
-## Modules
+- **`app.py`**: O ficheiro principal da aplicação FastAPI, que inicializa a aplicação e define as rotas da API.
+- **`models.py`**: Contém todos os modelos de dados Pydantic usados para validação de requisições e respostas.
+- **`config.py`**: Contém toda a configuração da aplicação, como horários de funcionamento do restaurante, capacidade e duração da sessão.
+- **`responses.py`**: Armazena todas as respostas traduzidas que a Marta pode enviar ao utilizador.
+- **`sessions.py`**: Gere as sessões do utilizador, incluindo criação, recuperação e limpeza de sessões expiradas.
+- **`logic.py`**: Contém a lógica de negócio principal da assistente, incluindo processamento de mensagens e reconhecimento de intenção.
+- **`pratos_do_dia.py`**: Armazena os pratos especiais do dia do restaurante.
+- **`.env`**: Ficheiro de variáveis de ambiente.
+- **`requirements.txt`**: Uma lista de todas as dependências do projeto.
+- **`README.md`**: Este ficheiro, que contém a documentação do projeto.
+
+## Módulos
 
 ### `app.py`
 
@@ -84,8 +87,19 @@ A comunicação com o "grupo Staff no WhatsApp" e a espera de 5 minutos são **s
 
 ### `pratos_do_dia.py`
 
-Este módulo contém o dicionário `PRATOS_DO_DIA`, que armazena os pratos especiais que mudam diariamente. As chaves são datas no formato `YYYY-MM-DD`. Não contém o menu fixo nem a carta de vinhos.
-Exemplo: `{"2026-01-03": "Enguias, Choco frito, Cabrito assado.", "2026-01-04": "Arroz de Tamboril, Bacalhau à Brás."}`
+Este módulo contém o dicionário `PRATOS_DO_DIA`, que armazena os pratos especiais que mudam diariamente. As chaves são os nomes dos dias da semana (em inglês, minúsculas). Não contém o menu fixo nem a carta de vinhos.
+Exemplo:
+```python
+PRATOS_DO_DIA = {
+    "saturday": ['marisco', 'choco frito', 'arroz de tamboril'],
+    "sunday": ['arroz de tamboril', 'bacalhau à brás'],
+    "monday": ['salmão grelhado', 'arroz de tamboril'],
+    "tuesday": [], # fechado
+    "wednesday": ['enguias à caldeirada', 'cabrito assado'],
+    "thursday": ['leitão à bairrada', 'rojões'],
+    "friday": ['bacalhau à brás', 'choco frito']
+}
+```
 
 ## Exemplo de Simulação (Reserva com Confirmação do Staff)
 
