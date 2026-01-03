@@ -1,9 +1,14 @@
 [build]
-  command = "pip install -r requirements.txt"
+  command = ""
   publish = "."
   functions = "netlify/functions"
 
 [[redirects]]
   from = "/menu-hoje"
+  to = "/.netlify/functions/menu_hoje"
+  status = 200
+
+[[redirects]]
+  from = "/.netlify/functions/menu_hoje"
   to = "/.netlify/functions/menu_hoje"
   status = 200

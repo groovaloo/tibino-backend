@@ -1,8 +1,11 @@
 import json
 
-def lambda_handler(event, context):
+def handler(event, context):
     return {
         "statusCode": 200,
-        "headers": { "Content-Type": "application/json" },
+        "headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
         "body": json.dumps({"prato": "Arroz de tamboril", "preco": "18€"})
     }
