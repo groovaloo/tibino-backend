@@ -1,3 +1,9 @@
 [build]
-  command = "pip install -r requirements.txt && gunicorn app:app --worker-class uvicorn.workers.UvicornWorker"
+  command = "pip install -r requirements.txt"
+  functions = "netlify/functions"
   publish = "."
+
+[[redirects]]
+  from = "/menu-hoje"
+  to = "/.netlify/functions/menu_hoje"
+  status = 200
