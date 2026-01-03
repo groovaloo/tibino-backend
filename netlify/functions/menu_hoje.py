@@ -1,10 +1,8 @@
-from fastapi import FastAPI
-from mangum import Mangum
+import json
 
-app = FastAPI()
-
-@app.get("/menu-hoje")
-def menu():
-    return {"prato": "Arroz de tamboril", "preco": "18€"}
-
-handler = Mangum(app)
+def handler(event, context):
+    return {
+        "statusCode": 200,
+        "headers": { "Content-Type": "application/json" },
+        "body": json.dumps({"prato": "Arroz de tamboril", "preco": "18€"})
+    }
