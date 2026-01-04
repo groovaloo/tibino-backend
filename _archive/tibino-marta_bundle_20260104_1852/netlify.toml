@@ -1,0 +1,9 @@
+[build]
+  command = ""
+  publish = "."
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/menu-hoje"
+  to = "/.netlify/functions/menu_hoje"
+  status = 200

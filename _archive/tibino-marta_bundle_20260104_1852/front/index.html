@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurante Tibino - Menus do Dia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .menu {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .dish {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .price {
+            color: #666;
+        }
+
+        .chatbot-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #6d28d9;
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chatbot-popup {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            overflow: hidden;
+            display: none;
+        }
+
+        .chatbot-popup.active {
+            display: flex;
+        }
+
+        .chatbot-header {
+            background: #6d28d9;
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+        }
+
+        .chatbot-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: #6d28d9;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .marta-message {
+            align-self: flex-start;
+            background: #f0f0f0;
+            color: #333;
+            border-bottom-left-radius: 4px;
+        }
+
+        .typing-indicator {
+            align-self: flex-start;
+            background: #f0f0f0;
+            padding: 10px 15px;
+            border-radius: 18px;
+            display: none;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+
+        .chatbot-footer {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #eee;
+            background: white;
+        }
+
+        .chatbot-footer input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 24px;
+            outline: none;
+        }
+
+        .chatbot-footer input:focus {
+            border-color: #6d28d9;
+        }
+
+        .chatbot-footer button {
+            background: #6d28d9;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+            .chatbot-popup {
+                width: calc(100% - 30px);
+                height: 50vh;
+                bottom: 80px;
+                right: 15px;
+                left: 15px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .menu {
+                padding: 20px 15px;
+            }
+
+            .menu-item {
+                flex-direction: column;
+                gap: 5px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+    <script>
+        // Load menu from API
+        async function loadMenu() {
+            try {
+                const response = await fetch('/menu-hoje');
+                const menuItems = await response.json();
+                
+                const menuContainer = document.getElementById('menus-container');
+                menuContainer.innerHTML = ''; // Clear "Carregando menus..."
+                
+                if (menuItems.length === 0) {
+                    menuContainer.innerHTML = '<p>Nenhum item no cardápio hoje.</p>';
+                    return;
+                }
+                
+                menuItems.forEach(item => {
+                    const menuItem = document.createElement('div');
+                    menuItem.className = 'menu-item';
+                    menuItem.innerHTML = `
+                        <div class="dish">${item.prato}</div>
+                        <div class="price">R$ ${item.preco.toFixed(2)}</div>
+                    `;
+                    menuContainer.appendChild(menuItem);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar o cardápio:', error);
+                document.getElementById('menus-container').innerHTML = '<p>Erro ao carregar o cardápio.</p>';
+            }
+        }
+
+        // Chat functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMenu();
+            
+            const chatButton = document.querySelector('.chatbot-button');
+            const chatPopup = document.getElementById('chatbot-popup');
+            const chatInput = document.querySelector('.chatbot-footer input');
+            const sendButton = document.querySelector('.chatbot-footer button');
+            const chatMessages = document.querySelector('.chatbot-body');
+            const typingIndicator = document.getElementById('typing-indicator');
+            
+            // Initial message in chat
+            chatMessages.innerHTML = '<div class="message marta-message">Olá! Sou a Marta, como posso ajudar?</div>';
+
+            // Toggle chat popup
+            chatButton.addEventListener('click', () => {
+                chatPopup.classList.toggle('active'); // Reverted to toggle
+                if (chatPopup.classList.contains('active')) {
+                    chatInput.focus();
+                }
+            });
+            
+            // Close chat with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && chatPopup.classList.contains('active')) {
+                    chatPopup.classList.remove('active');
+                }
+            });
+            
+            // Close chat when clicking outside
+            document.addEventListener('mousedown', (e) => {
+                if (!chatPopup.contains(e.target) && !chatButton.contains(e.target) && chatPopup.classList.contains('active')) {
+                    chatPopup.classList.remove('active');
+                }
+            });
+            
+            // Send message function
+            async function sendMessage() {
+                const message = chatInput.value.trim();
+                if (!message) return;
+                
+                // Add user message to chat
+                addMessage(message, 'user');
+                chatInput.value = '';
+                
+                // Show typing indicator
+                typingIndicator.classList.add('active');
+                
+                try {
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ text: message })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    // Hide typing indicator
+                    typingIndicator.classList.remove('active');
+                    
+                    // Add Marta's response
+                    addMessage(data.text, 'marta');
+                } catch (error) {
+                    console.error('Erro ao enviar mensagem:', error);
+                    typingIndicator.classList.remove('active');
+                    addMessage('Erro ao enviar mensagem. Tente novamente.', 'marta');
+                }
+            }
+            
+            // Add message to chat
+            function addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}-message`;
+                messageDiv.textContent = text;
+                chatMessages.appendChild(messageDiv);
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Event listeners for sending messages
+            sendButton.addEventListener('click', sendMessage);
+            
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Restaurante Tibino - Menus do Dia</h1>
+        
+        <img src="/fotos/tibino.jpg" alt="Fachada do Restaurante Tibino" style="max-width: 100%;">
+        
+        <h2>Menus do Dia</h2>
+        
+        <div id="menus-container">
+            <!-- Os menus diários serão carregados aqui -->
+            <p>Carregando menus...</p>
+        </div>
+    </div>
+
+    <button class="chatbot-button">Fala com a Marta</button>
+
+    <div id="chatbot-popup" class="chatbot-popup">
+        <div class="chatbot-header">Chat com a Marta</div>
+        <div class="chatbot-body">
+            <!-- Mensagens do chatbot aqui -->
+            <p>Olá! Como posso ajudar?</p>
+        </div>
+        <div class="typing-indicator" id="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        </div>
+        <div class="chatbot-footer">
+            <input type="text" placeholder="Escreve a tua mensagem...">
+            <button>Enviar</button>
+        </div>
+    </div>
+</body>
+</html>
