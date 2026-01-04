@@ -108,7 +108,7 @@
             const menusContainer = document.getElementById('menus-container');
             try {
                 // NOTE: This endpoint needs to be implemented in the backend.
-                const response = await fetch('https://tibino-backend.netlify.app/menu-hoje');
+                const response = await fetch('/menu-hoje');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
