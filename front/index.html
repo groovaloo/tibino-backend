@@ -1,1 +1,309 @@
-<!-- I need to fetch the current file first to get the SHA and then update it -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tibino - Sistema de Gerenciamento</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 1200px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .card-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .card-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .card-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .features {
+            background: #f8f9fa;
+            padding: 40px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+        }
+
+        .features h2 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-item {
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .feature-item p {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: #333;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .chatbot-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chatbot-button:hover {
+            background: #764ba2;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #e9ecef;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .button-container {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Tibino</h1>
+            <p>Sistema de Gerenciamento Inteligente</p>
+        </div>
+
+        <div class="content">
+            <div class="cards-container">
+                <div class="card">
+                    <div class="card-icon">📊</div>
+                    <h3>Dashboard</h3>
+                    <p>Visualize dados em tempo real e acompanhe o desempenho dos seus negócios com gráficos interativos.</p>
+                    <button class="card-button">Acessar Dashboard</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">📈</div>
+                    <h3>Relatórios</h3>
+                    <p>Gere relatórios personalizados e exporte dados em diversos formatos para análise profunda.</p>
+                    <button class="card-button">Ver Relatórios</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">⚙️</div>
+                    <h3>Configurações</h3>
+                    <p>Personalize o sistema de acordo com suas necessidades e preferências.</p>
+                    <button class="card-button">Configurar</button>
+                </div>
+            </div>
+
+            <div class="features">
+                <h2>Recursos Principais</h2>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <h4>✨ Interface Intuitiva</h4>
+                        <p>Design moderno e fácil de usar que facilita o aprendizado e a navegação.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>🔒 Segurança</h4>
+                        <p>Proteção avançada de dados com criptografia de ponta a ponta.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>⚡ Performance</h4>
+                        <p>Sistema otimizado para máxima velocidade e eficiência.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>🌐 Integração</h4>
+                        <p>Compatível com diversos sistemas e plataformas externas.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>📱 Responsivo</h4>
+                        <p>Funciona perfeitamente em qualquer dispositivo: desktop, tablet ou smartphone.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>🛠️ Suporte 24/7</h4>
+                        <p>Equipe dedicada pronta para ajudar a qualquer hora do dia.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-container">
+                <button class="chatbot-button" onclick="abrirChat()">Fala com a Marta</button>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 Tibino - Todos os direitos reservados. Desenvolvido com ❤️</p>
+        </footer>
+    </div>
+
+    <script>
+        function abrirChat() {
+            alert('Chat com Marta será aberto em breve!');
+            // Aqui você pode adicionar a lógica para abrir o chat
+            // Por exemplo: window.location.href = '/chat'; ou abrir um modal
+        }
+    </script>
+</body>
+</html>
