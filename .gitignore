@@ -1,3 +1,4 @@
 .env
 __pycache__/
-.pyc
+.pyc.DS_Store
+front_bundle_20260104_1538.zip
