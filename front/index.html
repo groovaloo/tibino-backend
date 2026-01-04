@@ -112,9 +112,9 @@
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                const data = await response.json(); // Assuming the backend returns JSON
-                if (data.menu && data.menu.length > 0) {
-                    menusContainer.innerHTML = '<ul>' + data.menu.map(item => `<li>${item}</li>`).join('') + '</ul>';
+                const data = await response.json();
+                if (data.prato) {
+                    menusContainer.innerHTML = `<p>${data.prato} (${data.preco})</p>`;
                 } else {
                     menusContainer.innerHTML = '<p>Nenhum menu do dia disponível.</p>';
                 }
